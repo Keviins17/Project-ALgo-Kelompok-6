@@ -1,0 +1,119 @@
+// projek algoritma.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct Treatment {
+    string name;
+    double price;
+};
+
+struct Shoe {
+    string ownerName;
+    string condition;
+    Treatment treatment;
+    string status; // e.g., "In Progress", "Completed"
+};
+
+class ShoeCareManagementSystem {
+private:
+    vector<Shoe> orders;
+    vector<Treatment> treatments;
+    double dailyRevenue;
+    int dailyCapacity;
+    int currentOrders;
+
+public:
+    ShoeCareManagementSystem(int capacity) : dailyCapacity(capacity), currentOrders(0), dailyRevenue(0) {
+        // Initialize some treatments
+        treatments.push_back({ "Cleaning", 50.0 });
+        treatments.push_back({ "Polishing", 30.0 });
+        treatments.push_back({ "Repair", 100.0 });
+    }
+
+    void addOrder(const string& ownerName, const string& condition, const Treatment& treatment) {
+        if (currentOrders < dailyCapacity) {
+            Shoe newOrder = { ownerName, condition, treatment, "In Progress" };
+            orders.push_back(newOrder);
+            currentOrders++;
+            cout << "Order added for " << ownerName << " with treatment " << treatment.name << endl;
+        }
+        else {
+            cout << "Daily capacity reached. Cannot accept more orders." << endl;
+        }
+    }
+
+    void updateOrderStatus(int orderIndex, const string& newStatus) {
+        if (orderIndex >= 0 && orderIndex < orders.size()) {
+            orders[orderIndex].status = newStatus;
+            cout << "Order status updated to " << newStatus << endl;
+        }
+        else {
+            cout << "Invalid order index." << endl;
+        }
+    }
+
+    void completeOrder(int orderIndex) {
+        if (orderIndex >= 0 && orderIndex < orders.size()) {
+            dailyRevenue += orders[orderIndex].treatment.price;
+            orders[orderIndex].status = "Completed";
+            cout << "Order for " << orders[orderIndex].ownerName << " completed." << endl;
+            currentOrders--;
+        }
+        else {
+            cout << "Invalid order index." << endl;
+        }
+    }
+
+    void showDailyRevenue() const {
+        cout << "Total daily revenue: $" << dailyRevenue << endl;
+    }
+
+    void showOrders() const {
+        cout << "Current Orders:" << endl;
+        for (size_t i = 0; i < orders.size(); ++i) {
+            cout << i << ": " << orders[i].ownerName << " - " << orders[i].treatment.name << " - " << orders[i].status << endl;
+        }
+    }
+
+    void showBestSellingTreatment() const {
+        // This is a placeholder for a more complex implementation
+        cout << "Best selling treatment: " << treatments[0].name << " (for demonstration purposes)" << endl;
+    }
+};
+
+int main() {
+    ShoeCareManagementSystem scms(5); // Daily capacity of 5 orders
+
+    // Simulating some operations
+    Treatment cleaning = { "Cleaning", 50.0 };
+    Treatment polishing = { "Polishing", 30.0 };
+
+    scms.addOrder("Alice", "New", cleaning);
+    scms.addOrder("Bob", "Worn", polishing);
+    scms.showOrders();
+
+    scms.updateOrderStatus(0, "In Progress");
+    scms.completeOrder(0);
+    scms.showDailyRevenue();
+    scms.showOrders();
+
+    scms.showBestSellingTreatment();
+
+    return 0;
+}
+
+// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+// Debug program: F5 or Debug > Start Debugging menu
+
+// Tips for Getting Started: 
+//   1. Use the Solution Explorer window to add/manage files
+//   2. Use the Team Explorer window to connect to source control
+//   3. Use the Output window to see build output and other messages
+//   4. Use the Error List window to view errors
+//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
